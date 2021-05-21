@@ -1,0 +1,20 @@
+.interface-service:deploy:template:
+  stage: deploy
+  when: manual
+  script:
+    - docker-compose up -d interface-service;
+
+interface-service:deploy:develop:
+  extends:
+    - .develop:stage:template
+    - .interface-service:deploy:template
+
+interface-service:deploy:stage:
+  extends:
+    - .stage:stage:template
+    - .interface-service:deploy:template
+
+interface-service:deploy:production:
+  extends:
+    - .production:stage:template
+    - .interface-service:deploy:template

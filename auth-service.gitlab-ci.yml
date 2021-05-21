@@ -1,0 +1,20 @@
+.auth-service:deploy:template:
+  stage: deploy
+  when: manual
+  script:
+    - docker-compose up -d auth-service;
+
+auth-service:deploy:develop:
+  extends:
+    - .develop:stage:template
+    - .auth-service:deploy:template
+
+auth-service:deploy:stage:
+  extends:
+    - .stage:stage:template
+    - .auth-service:deploy:template
+
+auth-service:deploy:production:
+  extends:
+    - .production:stage:template
+    - .auth-service:deploy:template

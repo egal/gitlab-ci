@@ -1,0 +1,20 @@
+.web-service:deploy:template:
+  stage: deploy
+  when: manual
+  script:
+    - docker-compose up -d web-service;
+
+web-service:deploy:develop:
+  extends:
+    - .develop:stage:template
+    - .web-service:deploy:template
+
+web-service:deploy:stage:
+  extends:
+    - .stage:stage:template
+    - .web-service:deploy:template
+
+web-service:deploy:production:
+  extends:
+    - .production:stage:template
+    - .web-service:deploy:template

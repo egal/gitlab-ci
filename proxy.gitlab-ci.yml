@@ -1,0 +1,57 @@
+.proxy:deploy:
+  stage: deploy
+  when: manual
+  script:
+    - docker-compose build proxy;
+    - docker-compose run
+      --rm
+      --name proxy-test
+      proxy
+      nginx -t;
+    - docker-compose up -d proxy;
+
+proxy:deploy:develop:
+  extends:
+    - .develop:stage:template
+    - .proxy:deploy
+
+proxy:deploy:stage:
+  extends:
+    - .stage:stage:template
+    - .proxy:deploy
+
+proxy:deploy:production:
+  extends:
+    - .production:stage:template
+    - .proxy:deploy
+
+.proxy:test:after_deploy:template:
+  stage: test:after_deploy
+  when: on_success
+  parallel: 5
+  retry:
+    max: 2
+    when: runner_system_failure
+  script:
+    - docker-compose exec -T proxy whoami;
+
+proxy:test:after_deploy:develop:
+  extends:
+    - .develop:stage:template
+    - .proxy:test:after_deploy:template
+  needs:
+    - proxy:deploy:develop
+
+proxy:test:after_deploy:stage:
+  extends:
+    - .stage:stage:template
+    - .proxy:test:after_deploy:template
+  needs:
+    - proxy:deploy:stage
+
+proxy:test:after_deploy:production:
+  extends:
+    - .production:stage:template
+    - .proxy:test:after_deploy:template
+  needs:
+    - proxy:deploy:production

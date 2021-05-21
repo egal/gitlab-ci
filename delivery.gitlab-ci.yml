@@ -1,0 +1,37 @@
+.compose:delivery:template:
+  stage: delivery
+  when: always
+  variables:
+    VARIABLES_TO_PASTE_IN_ENV_FILE: PROJECT_NAME,CI_ENVIRONMENT_NAME,CONTAINER_REGISTRY_URL,MOUNT_DIR
+  script:
+    - cd "${CI_PROJECT_DIR}";
+    - echo "COMPOSE_FILE=docker-compose.yml:docker-compose.deploy.yml:docker-compose.${CI_ENVIRONMENT_NAME}.yml" > .env;
+      for variableName in $(echo "${VARIABLES_TO_PASTE_IN_ENV_FILE}" | tr "," " "); do
+        if [[ -n ${!variableName} ]]; then
+          echo "${variableName}=${!variableName}" >> .env;
+        fi;
+      done;
+    - docker-compose config -q; # TODO: Сделать проверку на отсутствие warnings в docker-compose config -q
+    - rsync "${CI_PROJECT_DIR}/" "${COMPOSE_DIR}/"
+        -r
+        --delete
+        --exclude /.git
+        --exclude /.gitignore
+        --exclude /.gitlab
+        --exclude /.docker;
+    - cd "${COMPOSE_DIR}";
+
+compose:delivery:develop:
+  extends:
+    - .develop:stage:template
+    - .compose:delivery:template
+
+compose:delivery:stage:
+  extends:
+    - .stage:stage:template
+    - .compose:delivery:template
+
+compose:delivery:production:
+  extends:
+    - .production:stage:template
+    - .compose:delivery:template
