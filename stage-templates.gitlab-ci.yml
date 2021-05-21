@@ -59,9 +59,9 @@
     # region Login to Container Registry
     # TODO: Login to Gitlab Container Registry
     - >
-      if [[ -z "${CONTAINER_REGISTRY}" ]]; then
-        export CONTAINER_REGISTRY='harbor';
-      fi;
+      # if [[ -z "${CONTAINER_REGISTRY}" ]]; then
+      #   export CONTAINER_REGISTRY='harbor';
+      # fi;
       if [[ "${CONTAINER_REGISTRY}" = 'harbor' ]]; then
         if [[ -z "${HARBOR_USER}" || -z "${HARBOR_PASSWORD}" || -z "${HARBOR_URL}" ]]; then
           echo 'HARBOR_USER, HARBOR_PASSWORD, HARBOR_URL variables is required!';
