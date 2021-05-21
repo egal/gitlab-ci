@@ -70,11 +70,11 @@
         export CONTAINER_REGISTRY_URL="${HARBOR_URL}";
         export CONTAINER_REGISTRY_USER="${HARBOR_USER}";
         export CONTAINER_REGISTRY_PASSWORD="${HARBOR_PASSWORD}";
+        echo "${CONTAINER_REGISTRY_PASSWORD}" | docker login "${CONTAINER_REGISTRY_URL}" -u "${CONTAINER_REGISTRY_USER}" --password-stdin;
       elif [[ "${CONTAINER_REGISTRY}" = 'gitlab' ]]; then
         echo 'Connection to Gitlab Container Registry not implemented!';
         exit 1;
       fi;
-      echo "${CONTAINER_REGISTRY_PASSWORD}" | docker login "${CONTAINER_REGISTRY_URL}" -u "${CONTAINER_REGISTRY_USER}" --password-stdin;
     # endregion Login to Container Registry
     # Переход в рабочую директорию
     - cd "${COMPOSE_DIR}";
