@@ -59,10 +59,7 @@
     # region Login to Container Registry
     # TODO: Login to Gitlab Container Registry
     - >
-      # if [[ -z "${CONTAINER_REGISTRY}" ]]; then
-      #   export CONTAINER_REGISTRY='harbor';
-      # fi;
-      if [[ "${CONTAINER_REGISTRY}" = 'harbor' ]]; then
+      if [[ "${CONTAINER_REGISTRY}" == 'harbor' ]]; then
         if [[ -z "${HARBOR_USER}" || -z "${HARBOR_PASSWORD}" || -z "${HARBOR_URL}" ]]; then
           echo 'HARBOR_USER, HARBOR_PASSWORD, HARBOR_URL variables is required!';
           exit 1;
@@ -71,7 +68,7 @@
         export CONTAINER_REGISTRY_USER="${HARBOR_USER}";
         export CONTAINER_REGISTRY_PASSWORD="${HARBOR_PASSWORD}";
         echo "${CONTAINER_REGISTRY_PASSWORD}" | docker login "${CONTAINER_REGISTRY_URL}" -u "${CONTAINER_REGISTRY_USER}" --password-stdin;
-      elif [[ "${CONTAINER_REGISTRY}" = 'gitlab' ]]; then
+      elif [[ "${CONTAINER_REGISTRY}" == 'gitlab' ]]; then
         echo 'Connection to Gitlab Container Registry not implemented!';
         exit 1;
       fi;
