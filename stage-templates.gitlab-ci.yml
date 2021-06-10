@@ -61,17 +61,23 @@
     - >
       if [[ "${CONTAINER_REGISTRY}" == 'harbor' ]]; then
         if [[ -z "${HARBOR_USER}" || -z "${HARBOR_PASSWORD}" || -z "${HARBOR_URL}" ]]; then
-          echo 'HARBOR_USER, HARBOR_PASSWORD, HARBOR_URL variables is required!';
-          exit 1;
-        fi;
-        export CONTAINER_REGISTRY_URL="${HARBOR_URL}";
-        export CONTAINER_REGISTRY_USER="${HARBOR_USER}";
-        export CONTAINER_REGISTRY_PASSWORD="${HARBOR_PASSWORD}";
-        echo "${CONTAINER_REGISTRY_PASSWORD}" | docker login "${CONTAINER_REGISTRY_URL}" -u "${CONTAINER_REGISTRY_USER}" --password-stdin;
+          echo 'HARBOR_USER, HARBOR_PASSWORD, HARBOR_URL variables is required!'
+          exit 1
+        fi
+        export CONTAINER_REGISTRY_URL="${HARBOR_URL}"
+        export CONTAINER_REGISTRY_USER="${HARBOR_USER}"
+        export CONTAINER_REGISTRY_PASSWORD="${HARBOR_PASSWORD}"
+        echo "${CONTAINER_REGISTRY_PASSWORD}" | docker login "${CONTAINER_REGISTRY_URL}" -u "${CONTAINER_REGISTRY_USER}" --password-stdin
+      elif [[ "${CONTAINER_REGISTRY}" == 'dockerhub' ]]; then
+        if [[ -z "${DOCKER_HUB_ACCESS_TOKEN}" || -z "${DOCKER_HUB_USERNAME}" ]]; then
+          echo 'HARBOR_USER, HARBOR_PASSWORD, HARBOR_URL variables is required!'
+          exit 1
+        fi
+        echo "${DOCKER_HUB_ACCESS_TOKEN}" | docker login --username "${DOCKER_HUB_USERNAME}" --password-stdin
       elif [[ "${CONTAINER_REGISTRY}" == 'gitlab' ]]; then
-        echo 'Connection to Gitlab Container Registry not implemented!';
-        exit 1;
-      fi;
+        echo 'Connection to Gitlab Container Registry not implemented!'
+        exit 1
+      fi
     # endregion Login to Container Registry
     # Переход в рабочую директорию
     - cd "${COMPOSE_DIR}";
