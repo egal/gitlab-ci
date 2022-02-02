@@ -52,17 +52,9 @@ prepare:
   when: always
   variables:
     GIT_STRATEGY: fetch
-    DOT_ENV_FILE_CONTENT: |
+    DOT_ENV_FILE_CONTENT: | # TODO: Add environment variables you need!
       ENVIRONMENT_NAME=$CI_ENVIRONMENT_NAME
       PROJECT_NAME=$CI_PROJECT_NAME
-      RABBITMQ_USER=user
-      DB_USERNAME=user
-      RABBITMQ_PASSWORD=secret
-      DB_PASSWORD=secret
-      AUTH_SERVICE_KEY=
-      AUTH_SERVICE_ENVIRONMENT_APP_SERVICES=
-      AUTH_SERVICE_KEY=
-      CORE_SERVICE_KEY=
   script:
     - rsync "${CI_PROJECT_DIR}/" "${WORKDIR}/" -r --delete --exclude '/.git'
     - |
