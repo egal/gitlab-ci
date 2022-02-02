@@ -1,0 +1,84 @@
+include:
+  - local: .gitlab-ci/deploy.gitlab-ci.yml
+
+.envrironment-template: &environment-template
+  name: testing/${CI_COMMIT_REF_SLUG}
+  url: http://testing-${CI_COMMIT_REF_SLUG}.example.domain # TODO: Set your value!
+
+.template:
+  extends: .raw:template
+  only:
+    - merge_requests
+  environment:
+    <<: *environment-template
+    on_stop: teardown-environment
+  tags:
+    - server-tag # TODO: Set your value!
+
+.run-phpcs-script: &run-phpcs-script
+  script: docker-compose run --rm --no-deps "${SERVICE_NAME}" php vendor/bin/phpcs .
+
+.run-phpunit-script: &run-phpunit-script
+  script: docker-compose run --rm --no-deps "${SERVICE_NAME}" php vendor/bin/phpunit
+
+teardown-environment:
+  extends: .template
+  stage: stopping
+  when: manual
+  needs: []
+  environment:
+    <<: *environment-template
+    action: stop
+  script:
+    - |
+      source '.proxy.env'
+      sudo rm -rf /etc/nginx/conf.d/${DOMAIN}.conf
+      sudo nginx -s reload
+    - |
+      docker-compose stop --timeout 0
+      docker-compose rm --force -v
+      docker-compose down --volumes --remove-orphans --rmi local --timeout 0
+    - cd / && rm -rf "${WORKDIR}"
+
+phpcs-configs-equals:test:
+  extends: .template
+  stage: testing
+  needs:
+    - prepare
+  script: cmp -s server/auth-service/phpcs.xml server/core-service/phpcs.xml
+
+core-service:phpcs:test:
+  extends: .template
+  stage: testing
+  variables:
+    SERVICE_NAME: core-service
+  needs:
+    - core-service:deploy
+  <<: *run-phpcs-script
+
+auth-service:phpcs:test:
+  extends: .template
+  stage: testing
+  variables:
+    SERVICE_NAME: auth-service
+  needs:
+    - auth-service:deploy
+  <<: *run-phpcs-script
+
+core-service:phpunit:test:
+  extends: .template
+  stage: testing
+  variables:
+    SERVICE_NAME: core-service
+  needs:
+    - core-service:deploy
+  <<: *run-phpunit-script
+
+auth-service:phpunit:test:
+  extends: .template
+  stage: testing
+  variables:
+    SERVICE_NAME: auth-service
+  needs:
+    - auth-service:deploy
+  <<: *run-phpunit-script
