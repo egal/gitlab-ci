@@ -40,9 +40,11 @@ teardown-environment:
       docker-compose down --volumes --remove-orphans --rmi local --timeout 0
     - cd / && rm -rf "${WORKDIR}"
 
-phpcs-configs-equals:test:
-  extends: .template
-  stage: testing
-  needs:
-    - prepare
-  script: exit 1 # TODO: Need implementation. Example: `cmp -s server/first-service/phpcs.xml server/second-service/phpcs.xml server/third-service/phpcs.xml`
+# TODO: Return tests.
+
+#phpcs-configs-equals:test:
+#  extends: .template
+#  stage: testing
+#  needs:
+#    - prepare
+#  script: exit 1 # TODO: Need implementation. Example: `cmp -s server/first-service/phpcs.xml server/second-service/phpcs.xml server/third-service/phpcs.xml`
