@@ -39,3 +39,4 @@ teardown-environment:
       docker-compose rm --force -v
       docker-compose down --volumes --remove-orphans --rmi local --timeout 0
     - cd / && rm -rf "${WORKDIR}"
+
