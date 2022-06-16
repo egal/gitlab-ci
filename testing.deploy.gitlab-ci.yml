@@ -16,7 +16,7 @@ include:
     - server-tag # TODO: Set your value!
 
 .run-phpcs-script: &run-phpcs-script
-  script: docker-compose run --rm --no-deps "${SERVICE_NAME}" php vendor/bin/phpcs -s --report=code .
+  script: docker-compose run --rm --no-deps "${SERVICE_NAME}" php vendor/bin/phpcs
 
 .run-phpunit-script: &run-phpunit-script
   script: docker-compose run --rm --no-deps "${SERVICE_NAME}" php vendor/bin/phpunit
