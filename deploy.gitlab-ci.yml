@@ -74,24 +74,6 @@ prepare:
       cat '.proxy.env' >> '.env'
       echo "${DOT_ENV_FILE_CONTENT}" >> '.env'
 
-core-service:build-service-image:
-  extends: .template
-  stage: build
-  needs:
-    - prepare
-  variables:
-    SERVICE_NAME: core-service
-  <<: *docker-compose-build-service-image-script
-
-auth-service:build-service-image:
-  extends: .template
-  stage: build
-  needs:
-    - prepare
-  variables:
-    SERVICE_NAME: auth-service
-  <<: *docker-compose-build-service-image-script
-
 client:build-service-image:
   extends: .template
   stage: build
@@ -156,50 +138,6 @@ postgres:deploy:
     - create-docker-network
   variables:
     SERVICE_NAME: postgres
-  <<: *docker-compose-service-deploy-script
-
-core-service:migration:
-  extends: .template
-  stage: deploy
-  needs:
-    - core-service:build-service-image
-    - postgres:deploy
-    - create-docker-network
-  variables:
-    SERVICE_NAME: core-service
-  <<: *migration-script
-
-auth-service:migration:
-  extends: .template
-  stage: deploy
-  needs:
-    - auth-service:build-service-image
-    - postgres:deploy
-    - create-docker-network
-  variables:
-    SERVICE_NAME: auth-service
-  <<: *migration-script
-
-auth-service:deploy:
-  extends: .template
-  stage: deploy
-  needs:
-    - auth-service:build-service-image
-    - auth-service:migration
-    - create-docker-network
-  variables:
-    SERVICE_NAME: auth-service
-  <<: *docker-compose-service-deploy-script
-
-core-service:deploy:
-  extends: .template
-  stage: deploy
-  needs:
-    - core-service:build-service-image
-    - core-service:migration
-    - create-docker-network
-  variables:
-    SERVICE_NAME: core-service
   <<: *docker-compose-service-deploy-script
 
 web-service:deploy:

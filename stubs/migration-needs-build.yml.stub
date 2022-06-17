@@ -3,8 +3,8 @@ __SERVICE_NAME__:migration:
   stage: deploy
   needs:
     - __SERVICE_NAME__:build-service-image
-    - postgres:deploy
     - create-docker-network
+    - postgres:deploy
   variables:
     SERVICE_NAME: __SERVICE_NAME__
   <<: *migration-script
